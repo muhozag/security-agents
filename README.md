@@ -1,0 +1,1 @@
+Capstone project prototype exploring AI-based defenses against prompt injection. Not a production security product.
