@@ -34,6 +34,7 @@ I designed these as two separate, swappable pieces rather than one combined scri
 4. **Set up continuous integration (CI)**: as would be the case in real-production ready engineering, every code push automatically runs a linter, my test suite, and a security scan of my own code.
 5. **Set up continuous deployment (CD)**: tagging a release automatically builds a Docker image, scans it for known vulnerabilities, and publishes it, so the end result is a real, runnable artifact, not just source code.
 6. **Verified the published image works standalone**: pulled it down fresh and ran it, confirming it works without needing my local setup at all.
+[View the published container image in the registry](https://github.com/muhozag/security-agents/pkgs/container/security-agents%2Fguardian-service)
 
 ## Results
 
