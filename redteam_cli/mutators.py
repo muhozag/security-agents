@@ -31,7 +31,7 @@ def technique_homoglyph(seed: str) -> str:
     out = []
     for ch in seed:
         lower = ch.lower()
-        if lower in HOMOGLYPHS and random.random() < 0.6:
+        if lower in HOMOGLYPHS and random.random() < 0.6: # nosec B311 
             repl = HOMOGLYPHS[lower]
             out.append(repl.upper() if ch.isupper() else repl)
         else:
@@ -55,7 +55,7 @@ def technique_spacing(seed: str) -> str:
     """Insert extra spaces / mixed case to break exact phrase matches."""
     out = []
     for ch in seed:
-        out.append(ch.upper() if random.random() < 0.5 else ch.lower())
+        out.append(ch.upper() if random.random() < 0.5 else ch.lower()) # nosec B311 
     spaced = " ".join(out).replace("   ", "  ")  # crude but effective
     return spaced
 

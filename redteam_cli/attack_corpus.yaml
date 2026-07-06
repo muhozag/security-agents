@@ -13,7 +13,7 @@ techniques:
 
 target:
   type: http
-  base_url: "http://localhost:8000"
+  base_url: "http://localhost:8001"
 
 budget:
   max_llm_calls: 0
