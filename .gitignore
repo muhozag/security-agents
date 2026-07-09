@@ -5,3 +5,4 @@ __pycache__/
 *.egg-info/
 redteam_report.md
 guardian_report.md
+.DS_Store
