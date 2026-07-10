@@ -58,8 +58,6 @@ class PromptSecurity:
         if not text:
             return False
 
-        text_lower = text.lower()
-
         # Check for injection patterns
         for pattern in PromptSecurity.INJECTION_PATTERNS:
             if pattern.search(text):
