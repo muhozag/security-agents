@@ -4,7 +4,6 @@ runner.py
 Reads a Corpus, builds the right adapter for whatever target it points
 to (HTTP service or local Python function), generates attack variants,
 fires them through the adapter, and returns AttackResults.
-
 """
 
 import importlib
@@ -12,9 +11,9 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "contracts"))
+
 from schemas import SecurityCheckRequest, AttackAttempt, AttackResult  # noqa: E402
 from adapter import HTTPAdapter, LocalFunctionAdapter  # noqa: E402
-
 from mutators import ALL_TECHNIQUES
 from llm_mutator import generate_llm_variants
 from corpus import Corpus
@@ -22,8 +21,10 @@ from corpus import Corpus
 
 def build_adapter(target_config):
     if target_config.type == "http":
-        return HTTPAdapter(base_url=target_config.base_url)
-
+        # Default HTTPAdapter timeout (5s) is too short for real Claude-based
+        # reasoning calls, especially across a full sweep. 30s gives enough
+        # headroom without letting a genuinely hung request block forever.
+        return HTTPAdapter(base_url=target_config.base_url, timeout_s=30.0)
     elif target_config.type == "local":
         module = importlib.import_module(target_config.module)
         # supports "ClassName.method_name" or a bare function name
@@ -32,7 +33,6 @@ def build_adapter(target_config):
         for part in parts:
             obj = getattr(obj, part)
         return LocalFunctionAdapter(detect_fn=obj)
-
     raise ValueError(f"Unknown target type: {target_config.type}")
 
 

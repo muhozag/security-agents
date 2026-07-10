@@ -14,6 +14,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(__file__))
+
 from corpus import load_corpus
 from runner import run_campaign
 
@@ -35,6 +36,7 @@ def summarize(results):
 
 def print_report(results):
     total, bypassed, by_technique = summarize(results)
+
     print("\n" + "=" * 60)
     print("RED TEAM REPORT")
     print("=" * 60)
@@ -54,13 +56,24 @@ def print_report(results):
     for r in results:
         if r.bypassed and shown < 10:
             print(f"  [{r.attempt.technique}] {r.attempt.variant!r} -> verdict={r.response.verdict}")
+            print(f"    reasoning: {r.response.reasoning}")
             shown += 1
+
+    print("\nExamples that were blocked:")
+    shown = 0
+    for r in results:
+        if not r.bypassed and shown < 10:
+            print(f"  [{r.attempt.technique}] {r.attempt.variant!r} -> verdict={r.response.verdict}")
+            print(f"    reasoning: {r.response.reasoning}")
+            shown += 1
+
     print("=" * 60 + "\n")
 
 
 def write_markdown_report(results, path):
     total, bypassed, by_technique = summarize(results)
     rate = bypassed / total if total else 0
+
     lines = [
         "# Red Team Report\n",
         f"- **Total attempts:** {total}",
@@ -80,6 +93,15 @@ def write_markdown_report(results, path):
     for r in results:
         if r.bypassed and shown < 20:
             lines.append(f"- **[{r.attempt.technique}]** seed: `{r.attempt.seed}` -> variant: `{r.attempt.variant}`")
+            lines.append(f"  - reasoning: {r.response.reasoning}")
+            shown += 1
+
+    lines.append("\n## Examples that were blocked\n")
+    shown = 0
+    for r in results:
+        if not r.bypassed and shown < 20:
+            lines.append(f"- **[{r.attempt.technique}]** seed: `{r.attempt.seed}` -> variant: `{r.attempt.variant}`")
+            lines.append(f"  - reasoning: {r.response.reasoning}")
             shown += 1
 
     with open(path, "w") as f:
@@ -94,6 +116,7 @@ def main():
 
     corpus = load_corpus(args.corpus)
     results = run_campaign(corpus)
+
     print_report(results)
     write_markdown_report(results, args.report)
     print(f"Full report written to {args.report}")
